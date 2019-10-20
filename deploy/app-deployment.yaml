@@ -58,7 +58,7 @@ spec:
         image: localhost:32000/app
         name: app
         ports:
-        - containerPort: 9000
+        - containerPort: 8000
         resources: {}
         volumeMounts:
         - name: root-app 

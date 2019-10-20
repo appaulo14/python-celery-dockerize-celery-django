@@ -1,7 +1,7 @@
 apiVersion: v1
 data:
-  CELERY_BROKER: amqp://user:password@10.111.149.169:5672
-  FLOWER_BROKER: amqp://user:password@10.111.149.169:5672
+  CELERY_BROKER: amqp://user:password@10.152.183.2:5672
+  FLOWER_BROKER: amqp://user:password@10.152.183.2:5672
   RABBITMQ_DEFAULT_PASS: password
   RABBITMQ_DEFAULT_USER: user
 kind: ConfigMap
