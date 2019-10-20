@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: app
+  name: app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      io.kompose.service: app
+  template:
+    metadata:
+      labels:
+        io.kompose.service: app
+    spec:
+      volumes:
+      - name: root-app
+        hostPath:
+          path: /home/paul/git/python-celery-dockerize-celery-django/app
+          type: Directory
+      - name: etc-timezone
+        hostPath:
+          path: /etc/timezone
+          type: File
+      - name: etc-localtime
+        hostPath:
+          path: /etc/localtime
+          type: File
+      containers:
+      - args:
+        - python
+        - manage.py
+        - runserver
+        - 0.0.0.0:8000
+        env:
+        - name: CELERY_BROKER
+          valueFrom:
+            configMapKeyRef:
+              key: CELERY_BROKER
+              name: broker-env-env
+        - name: FLOWER_BROKER
+          valueFrom:
+            configMapKeyRef:
+              key: FLOWER_BROKER
+              name: broker-env-env
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            configMapKeyRef:
+              key: RABBITMQ_DEFAULT_PASS
+              name: broker-env-env
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            configMapKeyRef:
+              key: RABBITMQ_DEFAULT_USER
+              name: broker-env-env
+        image: localhost:32000/app
+        name: app
+        ports:
+        - containerPort: 9000
+        resources: {}
+        volumeMounts:
+        - name: root-app 
+          mountPath: /app
+          readOnly: true
+        - name: etc-timezone
+          mountPath: /etc/timezone
+          readOnly: true
+        - name: etc-localtime
+          mountPath: /etc/localtime
+          readOnly: true
+

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.dev.yml
+    kompose.version: 1.18.0 (06a2e56)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: broker
+  name: broker
+spec:
+  ports:
+  - name: "5672"
+    port: 5672
+    targetPort: 5672
+  selector:
+    io.kompose.service: broker
+  clusterIP: 10.152.183.2
+status:
+  loadBalancer: {}
+

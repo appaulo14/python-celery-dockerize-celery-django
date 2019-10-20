@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: worker
+  name: worker
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      io.kompose.service: worker
+  template:
+    metadata:
+      labels:
+        io.kompose.service: worker
+    spec:
+      volumes:
+      - name: root-app
+        hostPath:
+          path: /home/paul/git/python-celery-dockerize-celery-django/app
+          type: Directory
+      - name: etc-timezone
+        hostPath:
+          path: /etc/timezone
+          type: File
+      - name: etc-localtime
+        hostPath:
+          path: /etc/localtime
+          type: File
+      containers:
+      - args:
+        - celery
+        - worker
+        - --app=worker.worker.app
+        - --pool=prefork
+        - --concurrency=5
+        - --hostname=worker@%h
+        - --logfile=/logs/celery.log
+        - --loglevel=INFO
+        env:
+        - name: CELERY_BROKER
+          valueFrom:
+            configMapKeyRef:
+              key: CELERY_BROKER
+              name: broker-env-env
+        - name: FLOWER_BROKER
+          valueFrom:
+            configMapKeyRef:
+              key: FLOWER_BROKER
+              name: broker-env-env
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            configMapKeyRef:
+              key: RABBITMQ_DEFAULT_PASS
+              name: broker-env-env
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            configMapKeyRef:
+              key: RABBITMQ_DEFAULT_USER
+              name: broker-env-env
+        image: localhost:32000/app
+        name: worker
+        ports:
+        - containerPort: 8000
+        resources: {}
+        volumeMounts:
+        - name: root-app 
+          mountPath: /app
+          readOnly: true
+        - name: etc-timezone
+          mountPath: /etc/timezone
+          readOnly: true
+        - name: etc-localtime
+          mountPath: /etc/localtime
+          readOnly: true
+

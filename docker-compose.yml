@@ -3,7 +3,7 @@ services:
 
   app:
     build: .
-    image: &app app
+    image: localhost:32000/app
     restart: "no"
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     env_file: &envfile
@@ -17,7 +17,7 @@ services:
 
   worker:
     build: .
-    image: *app
+    image: localhost:32000/app
     restart: "no"
     env_file: *envfile
     command: ["celery", "worker", "--app=worker.worker.app", "--concurrency=1", "--hostname=worker@%h", "--loglevel=INFO"]

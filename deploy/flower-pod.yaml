@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: flower
+  name: flower
+spec:
+  containers:
+  - env:
+    - name: CELERY_BROKER
+      valueFrom:
+        configMapKeyRef:
+          key: CELERY_BROKER
+          name: broker-env-env
+    - name: FLOWER_BROKER
+      valueFrom:
+        configMapKeyRef:
+          key: FLOWER_BROKER
+          name: broker-env-env
+    - name: RABBITMQ_DEFAULT_PASS
+      valueFrom:
+        configMapKeyRef:
+          key: RABBITMQ_DEFAULT_PASS
+          name: broker-env-env
+    - name: RABBITMQ_DEFAULT_USER
+      valueFrom:
+        configMapKeyRef:
+          key: RABBITMQ_DEFAULT_USER
+          name: broker-env-env
+    image: zoomeranalytics/flower:0.9.1-4.0.2
+    name: flower
+    ports:
+    - containerPort: 5555
+    resources: {}
+    volumeMounts:
+    - name: etc-timezone
+      mountPath: /etc/timezone
+      readOnly: true
+    - name: etc-localtime
+      mountPath: /etc/localtime
+      readOnly: true
+  restartPolicy: Never
+  volumes:
+  - name: etc-timezone
+    hostPath:
+      path: /etc/timezone
+      type: File
+  - name: etc-localtime
+    hostPath:
+      path: /etc/localtime
+      type: File
+status: {}
+
